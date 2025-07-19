@@ -1,4 +1,4 @@
-import { Users, Clock, Calendar, Video, BookOpen, Trophy, ArrowRight, Star, Zap, Shield } from "lucide-react"
+import { FiUsers, FiClock, FiCalendar, FiVideo, FiBookOpen, FiAward, FiArrowRight, FiStar, FiZap, FiShield } from 'react-icons/fi'
 import Link from "next/link"
 
 export default function HomePage() {
@@ -10,7 +10,7 @@ export default function HomePage() {
           <div className="flex items-center space-x-3">
             <div className="relative">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
-                <BookOpen className="h-6 w-6 text-white" />
+                <FiBookOpen className="h-6 w-6 text-white" />
               </div>
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
             </div>
@@ -73,7 +73,7 @@ export default function HomePage() {
 
         <div className="container mx-auto text-center relative z-10">
           <div className="inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-200 rounded-full text-blue-700 text-sm font-medium mb-8">
-            <Zap className="w-4 h-4 mr-2" />
+            <FiZap className="w-4 h-4 mr-2" />
             Join 10,000+ students already studying smarter
           </div>
 
@@ -95,28 +95,28 @@ export default function HomePage() {
               className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-lg font-semibold rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 flex items-center"
             >
               Get Started Free
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <FiArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/demo"
               className="px-8 py-4 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 text-lg font-semibold rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 flex items-center"
             >
-              <Video className="mr-2 w-5 h-5" />
+              <FiVideo className="mr-2 w-5 h-5" />
               Watch Demo
             </Link>
           </div>
 
           <div className="mt-16 flex items-center justify-center space-x-8 text-sm text-gray-500">
             <div className="flex items-center">
-              <Shield className="w-4 h-4 mr-2 text-green-500" />
+              <FiShield className="w-4 h-4 mr-2 text-green-500" />
               Secure & Private
             </div>
             <div className="flex items-center">
-              <Star className="w-4 h-4 mr-2 text-yellow-500" />
+              <FiStar className="w-4 h-4 mr-2 text-yellow-500" />
               4.9/5 Rating
             </div>
             <div className="flex items-center">
-              <Users className="w-4 h-4 mr-2 text-blue-500" />
+              <FiUsers className="w-4 h-4 mr-2 text-blue-500" />
               10K+ Students
             </div>
           </div>
@@ -136,7 +136,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: Users,
+                icon: FiUsers,
                 title: "Study Groups",
                 description:
                   "Create or join study groups with real-time chat, file sharing, and collaborative learning tools",
@@ -144,35 +144,35 @@ export default function HomePage() {
                 gradient: "from-blue-500 to-cyan-500",
               },
               {
-                icon: Clock,
+                icon: FiClock,
                 title: "Smart Pomodoro Timer",
                 description: "Focus with personal or group-synced Pomodoro sessions with intelligent break suggestions",
                 color: "green",
                 gradient: "from-green-500 to-emerald-500",
               },
               {
-                icon: Video,
+                icon: FiVideo,
                 title: "HD Video Meetings",
                 description: "Join crystal-clear video/audio meetings with screen sharing and interactive whiteboards",
                 color: "purple",
                 gradient: "from-purple-500 to-violet-500",
               },
               {
-                icon: Calendar,
+                icon: FiCalendar,
                 title: "Smart Calendar",
                 description: "AI-powered scheduling with Google Calendar sync and intelligent study session planning",
                 color: "orange",
                 gradient: "from-orange-500 to-red-500",
               },
               {
-                icon: BookOpen,
+                icon: FiBookOpen,
                 title: "Expert Educators",
                 description: "Connect with verified subject experts for personalized one-on-one learning sessions",
                 color: "red",
                 gradient: "from-red-500 to-pink-500",
               },
               {
-                icon: Trophy,
+                icon: FiAward,
                 title: "Gamification",
                 description: "Earn badges, climb leaderboards, and track detailed progress with advanced analytics",
                 color: "yellow",
@@ -205,10 +205,10 @@ export default function HomePage() {
         <div className="container mx-auto relative z-10">
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { number: "10K+", label: "Active Students", icon: Users },
-              { number: "500+", label: "Study Groups", icon: Users },
-              { number: "200+", label: "Expert Educators", icon: BookOpen },
-              { number: "50K+", label: "Study Hours Logged", icon: Clock },
+              { number: "10K+", label: "Active Students", icon: FiUsers },
+              { number: "500+", label: "Study Groups", icon: FiUsers },
+              { number: "200+", label: "Expert Educators", icon: FiBookOpen },
+              { number: "50K+", label: "Study Hours Logged", icon: FiClock },
             ].map((stat, index) => (
               <div key={index} className="text-center group">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-4 group-hover:bg-white/30 transition-colors">
@@ -240,7 +240,7 @@ export default function HomePage() {
             className="inline-flex items-center px-10 py-4 bg-white text-gray-900 text-lg font-bold rounded-2xl hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
           >
             Start Your Journey
-            <ArrowRight className="ml-3 w-5 h-5" />
+            <FiArrowRight className="ml-3 w-5 h-5" />
           </Link>
         </div>
       </section>
@@ -252,7 +252,7 @@ export default function HomePage() {
             <div>
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center">
-                  <BookOpen className="h-6 w-6 text-white" />
+                  <FiBookOpen className="h-6 w-6 text-white" />
                 </div>
                 <span className="text-xl font-bold">StudyLog</span>
               </div>

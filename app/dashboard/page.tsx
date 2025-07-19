@@ -1,23 +1,10 @@
 "use client"
 
-import {
-  Users,
-  Clock,
-  Calendar,
-  BookOpen,
-  Trophy,
-  Play,
-  Pause,
-  Plus,
-  Bell,
-  Search,
-  TrendingUp,
-  Zap,
-  Target,
-  Award,
-} from "lucide-react"
+import { FiUsers, FiClock, FiCalendar, FiBookOpen, FiAward, FiPlay, FiPause, FiPlus, FiBell, FiSearch, FiTrendingUp, FiZap, FiTarget } from 'react-icons/fi'
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 export default function DashboardPage() {
   const [timerActive, setTimerActive] = useState(false)
@@ -50,6 +37,9 @@ export default function DashboardPage() {
 
   const progress = (1 - timeLeft / (25 * 60)) * 100
 
+  const router = useRouter();
+  const { data: session } = useSession();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Header */}
@@ -58,7 +48,7 @@ export default function DashboardPage() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
-                <BookOpen className="h-6 w-6 text-white" />
+                <FiBookOpen className="h-6 w-6 text-white" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
@@ -106,10 +96,10 @@ export default function DashboardPage() {
 
           <div className="flex items-center space-x-4">
             <button className="p-2.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
-              <Search className="h-5 w-5" />
+              <FiSearch className="h-5 w-5" />
             </button>
             <button className="p-2.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all relative">
-              <Bell className="h-5 w-5" />
+              <FiBell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-semibold shadow-lg">
@@ -129,12 +119,17 @@ export default function DashboardPage() {
               <div className="relative p-8 bg-white/80 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, John! 👋</h2>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                      Welcome back{session?.user?.name ? `, ${session.user.name}` : ''}! 👋
+                    </h2>
+                    {session?.user?.email && (
+                      <p className="text-gray-600 text-lg mb-1">{session.user.email}</p>
+                    )}
                     <p className="text-gray-600 text-lg">Ready to continue your learning journey?</p>
                   </div>
                   <div className="hidden md:block">
                     <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
-                      <Zap className="h-10 w-10 text-white" />
+                      <FiZap className="h-10 w-10 text-white" />
                     </div>
                   </div>
                 </div>
@@ -147,7 +142,7 @@ export default function DashboardPage() {
                 {
                   title: "Study Hours Today",
                   value: "4.5h",
-                  icon: Clock,
+                  icon: FiClock,
                   color: "from-blue-500 to-cyan-500",
                   bgColor: "from-blue-50 to-cyan-50",
                   change: "+2.1h from yesterday",
@@ -155,7 +150,7 @@ export default function DashboardPage() {
                 {
                   title: "Active Groups",
                   value: "3",
-                  icon: Users,
+                  icon: FiUsers,
                   color: "from-green-500 to-emerald-500",
                   bgColor: "from-green-50 to-emerald-50",
                   change: "2 new messages",
@@ -163,7 +158,7 @@ export default function DashboardPage() {
                 {
                   title: "Current Streak",
                   value: "12 days",
-                  icon: Trophy,
+                  icon: FiAward,
                   color: "from-orange-500 to-red-500",
                   bgColor: "from-orange-50 to-red-50",
                   change: "Personal best!",
@@ -180,7 +175,7 @@ export default function DashboardPage() {
                       >
                         <stat.icon className="h-6 w-6 text-white" />
                       </div>
-                      <TrendingUp className="h-4 w-4 text-green-500" />
+                      <FiTrendingUp className="h-4 w-4 text-green-500" />
                     </div>
                     <div>
                       <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
@@ -199,7 +194,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
-                      <Clock className="h-6 w-6 text-white" />
+                      <FiClock className="h-6 w-6 text-white" />
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-gray-900">Pomodoro Timer</h3>
@@ -207,7 +202,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Target className="h-5 w-5 text-gray-400" />
+                    <FiTarget className="h-5 w-5 text-gray-400" />
                     <span className="text-sm text-gray-500">Focus Mode</span>
                   </div>
                 </div>
@@ -256,7 +251,7 @@ export default function DashboardPage() {
                           : "bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600"
                       }`}
                     >
-                      {timerActive ? <Pause className="h-5 w-5 mr-2" /> : <Play className="h-5 w-5 mr-2" />}
+                      {timerActive ? <FiPause className="h-5 w-5 mr-2" /> : <FiPlay className="h-5 w-5 mr-2" />}
                       {timerActive ? "Pause" : "Start"}
                     </button>
                     <button
@@ -277,13 +272,13 @@ export default function DashboardPage() {
                   <h3 className="text-xl font-bold text-gray-900">Your Study Groups</h3>
                   <p className="text-gray-600">Active groups you're part of</p>
                 </div>
-                <Link
-                  href="/groups/create"
+                <button
+                  onClick={() => router.push('/groups?create=1')}
                   className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
+                  <FiPlus className="h-4 w-4 mr-2" />
                   Create Group
-                </Link>
+                </button>
               </div>
 
               <div className="space-y-4">
@@ -352,7 +347,7 @@ export default function DashboardPage() {
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-lg">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <Calendar className="h-5 w-5 text-white" />
+                  <FiCalendar className="h-5 w-5 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">Upcoming Events</h3>
               </div>
@@ -388,7 +383,7 @@ export default function DashboardPage() {
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-lg">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <TrendingUp className="h-5 w-5 text-white" />
+                  <FiTrendingUp className="h-5 w-5 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">Weekly Progress</h3>
               </div>
@@ -421,7 +416,7 @@ export default function DashboardPage() {
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-lg">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <Award className="h-5 w-5 text-white" />
+                  <FiAward className="h-5 w-5 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">Recent Achievements</h3>
               </div>

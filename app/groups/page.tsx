@@ -5,94 +5,75 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Plus, Users, Clock, BookOpen, Lock, Globe, Star, MessageCircle } from "lucide-react"
+import { FiSearch, FiPlus, FiUsers, FiClock, FiBookOpen, FiLock, FiGlobe, FiStar, FiMessageCircle, FiX } from 'react-icons/fi';
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from 'next/navigation';
+
+interface Group {
+  _id?: string;
+  name: string;
+  description: string;
+  subject: string;
+  isPrivate: boolean;
+  tags: string[];
+  rating?: number;
+  members?: number;
+  lastActive?: string;
+  studyHours?: number;
+  avatar?: string;
+}
 
 export default function GroupsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedFilter, setSelectedFilter] = useState("all")
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    description: '',
+    subject: '',
+    isPrivate: false,
+    tags: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const groups = [
-    {
-      id: 1,
-      name: "Advanced Mathematics Study Group",
-      description: "Preparing for calculus and linear algebra exams together",
-      subject: "Mathematics",
-      members: 24,
-      isPrivate: false,
-      rating: 4.8,
-      tags: ["Calculus", "Linear Algebra", "Exam Prep"],
-      lastActive: "2 hours ago",
-      studyHours: 156,
-      avatar: "M",
-    },
-    {
-      id: 2,
-      name: "Physics Problem Solvers",
-      description: "Weekly physics problem-solving sessions and discussions",
-      subject: "Physics",
-      members: 18,
-      isPrivate: true,
-      rating: 4.6,
-      tags: ["Problem Solving", "Mechanics", "Thermodynamics"],
-      lastActive: "1 hour ago",
-      studyHours: 89,
-      avatar: "P",
-    },
-    {
-      id: 3,
-      name: "Computer Science Fundamentals",
-      description: "Learning algorithms, data structures, and programming concepts",
-      subject: "Computer Science",
-      members: 32,
-      isPrivate: false,
-      rating: 4.9,
-      tags: ["Algorithms", "Data Structures", "Programming"],
-      lastActive: "30 minutes ago",
-      studyHours: 203,
-      avatar: "CS",
-    },
-    {
-      id: 4,
-      name: "Biology Study Circle",
-      description: "Collaborative learning for biology students",
-      subject: "Biology",
-      members: 15,
-      isPrivate: false,
-      rating: 4.5,
-      tags: ["Cell Biology", "Genetics", "Ecology"],
-      lastActive: "4 hours ago",
-      studyHours: 67,
-      avatar: "B",
-    },
-    {
-      id: 5,
-      name: "Chemistry Lab Partners",
-      description: "Virtual lab discussions and chemistry problem solving",
-      subject: "Chemistry",
-      members: 12,
-      isPrivate: true,
-      rating: 4.7,
-      tags: ["Organic Chemistry", "Lab Work", "Reactions"],
-      lastActive: "1 day ago",
-      studyHours: 45,
-      avatar: "C",
-    },
-    {
-      id: 6,
-      name: "History Discussion Forum",
-      description: "Exploring historical events and their significance",
-      subject: "History",
-      members: 21,
-      isPrivate: false,
-      rating: 4.4,
-      tags: ["World History", "Analysis", "Research"],
-      lastActive: "3 hours ago",
-      studyHours: 78,
-      avatar: "H",
-    },
-  ]
+  useEffect(() => {
+    fetchGroups();
+    if (searchParams.get('create') === '1') {
+      setShowModal(true);
+    }
+  }, [searchParams]);
+
+  async function fetchGroups() {
+    setLoading(true);
+    const res = await fetch('/api/groups');
+    if (res.ok) {
+      setGroups(await res.json());
+    }
+    setLoading(false);
+  }
+
+  async function handleCreateGroup(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    const res = await fetch('/api/groups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...form,
+        tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean),
+      }),
+    });
+    if (res.ok) {
+      setForm({ name: '', description: '', subject: '', isPrivate: false, tags: '' });
+      setShowModal(false);
+      fetchGroups();
+    }
+    setLoading(false);
+  }
 
   const filteredGroups = groups.filter((group) => {
     const matchesSearch =
@@ -113,7 +94,7 @@ export default function GroupsPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <BookOpen className="h-8 w-8 text-blue-600" />
+              <FiBookOpen className="h-8 w-8 text-blue-600" />
               <h1 className="text-2xl font-bold text-gray-900">StudyLog</h1>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
@@ -148,18 +129,16 @@ export default function GroupsPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Study Groups</h2>
             <p className="text-gray-600">Join collaborative learning communities</p>
           </div>
-          <Button asChild>
-            <Link href="/groups/create">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Group
-            </Link>
+          <Button onClick={() => setShowModal(true)}>
+            <FiPlus className="h-4 w-4 mr-2" />
+            Create Group
           </Button>
         </div>
 
         {/* Search and Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <FiSearch className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search groups by name, subject, or tags..."
               value={searchQuery}
@@ -175,14 +154,14 @@ export default function GroupsPage() {
               variant={selectedFilter === "public" ? "default" : "outline"}
               onClick={() => setSelectedFilter("public")}
             >
-              <Globe className="h-4 w-4 mr-2" />
+              <FiGlobe className="h-4 w-4 mr-2" />
               Public
             </Button>
             <Button
               variant={selectedFilter === "private" ? "default" : "outline"}
               onClick={() => setSelectedFilter("private")}
             >
-              <Lock className="h-4 w-4 mr-2" />
+              <FiLock className="h-4 w-4 mr-2" />
               Private
             </Button>
           </div>
@@ -191,7 +170,7 @@ export default function GroupsPage() {
         {/* Groups Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredGroups.map((group) => (
-            <Card key={group.id} className="hover:shadow-lg transition-shadow">
+            <Card key={group._id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
@@ -203,15 +182,15 @@ export default function GroupsPage() {
                       <div className="flex items-center space-x-2 mt-1">
                         <Badge variant="secondary">{group.subject}</Badge>
                         {group.isPrivate ? (
-                          <Lock className="h-3 w-3 text-gray-500" />
+                          <FiLock className="h-3 w-3 text-gray-500" />
                         ) : (
-                          <Globe className="h-3 w-3 text-gray-500" />
+                          <FiGlobe className="h-3 w-3 text-gray-500" />
                         )}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <FiStar className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm font-medium">{group.rating}</span>
                   </div>
                 </div>
@@ -229,11 +208,11 @@ export default function GroupsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4 text-sm text-gray-600">
                   <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4" />
+                    <FiUsers className="h-4 w-4" />
                     <span>{group.members} members</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4" />
+                    <FiClock className="h-4 w-4" />
                     <span>{group.studyHours}h studied</span>
                   </div>
                 </div>
@@ -242,13 +221,13 @@ export default function GroupsPage() {
                   <span className="text-xs text-gray-500">Active {group.lastActive}</span>
                   <div className="flex space-x-2">
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/groups/${group.id}`}>
-                        <MessageCircle className="h-4 w-4 mr-1" />
+                      <Link href={`/groups/${group._id}`}>
+                        <FiMessageCircle className="h-4 w-4 mr-1" />
                         View
                       </Link>
                     </Button>
                     <Button size="sm" asChild>
-                      <Link href={`/groups/${group.id}/join`}>Join</Link>
+                      <Link href={`/groups/${group._id}/join`}>Join</Link>
                     </Button>
                   </div>
                 </div>
@@ -259,18 +238,89 @@ export default function GroupsPage() {
 
         {filteredGroups.length === 0 && (
           <div className="text-center py-12">
-            <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <FiUsers className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No groups found</h3>
             <p className="text-gray-600 mb-4">Try adjusting your search or create a new study group</p>
-            <Button asChild>
-              <Link href="/groups/create">
-                <Plus className="h-4 w-4 mr-2" />
-                Create New Group
-              </Link>
+            <Button onClick={() => setShowModal(true)}>
+              <FiPlus className="h-4 w-4 mr-2" />
+              Create New Group
             </Button>
           </div>
         )}
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+          <form
+            onSubmit={handleCreateGroup}
+            className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative"
+          >
+            <button
+              type="button"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              onClick={() => {
+                setShowModal(false);
+                if (searchParams.get('create') === '1') router.push('/groups');
+              }}
+            >
+              <FiX className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold mb-4">Create Study Group</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Group Name</label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                className="w-full border border-gray-200 rounded-lg px-3 py-2"
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Subject</label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2"
+                value={form.subject}
+                onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Tags (comma separated)</label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2"
+                value={form.tags}
+                onChange={(e) => setForm({ ...form, tags: e.target.value })}
+              />
+            </div>
+            <div className="mb-4 flex items-center">
+              <input
+                type="checkbox"
+                checked={form.isPrivate}
+                onChange={(e) => setForm({ ...form, isPrivate: e.target.checked })}
+                className="mr-2"
+                id="private-group"
+              />
+              <label htmlFor="private-group" className="text-sm">Private Group (requires admin approval)</label>
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold mt-4 hover:from-blue-700 hover:to-indigo-700 transition-all"
+              disabled={loading}
+            >
+              {loading ? 'Creating...' : <span className="inline-flex items-center"><FiPlus className="mr-2" />Create Group</span>}
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   )
 }

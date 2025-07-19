@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Star, BookOpen, Clock, DollarSign, Calendar, Video, MessageCircle, Award } from "lucide-react"
+import { FiSearch, FiStar, FiBookOpen, FiClock, FiDollarSign, FiCalendar, FiVideo, FiMessageCircle, FiAward } from 'react-icons/fi';
 import Link from "next/link"
 import { useState } from "react"
 
@@ -130,7 +130,7 @@ export default function EducatorsPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <BookOpen className="h-8 w-8 text-blue-600" />
+              <FiBookOpen className="h-8 w-8 text-blue-600" />
               <h1 className="text-2xl font-bold text-gray-900">StudyLog</h1>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
@@ -168,7 +168,7 @@ export default function EducatorsPage() {
         {/* Search and Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <FiSearch className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search educators by name, subject, or expertise..."
               value={searchQuery}
@@ -208,17 +208,17 @@ export default function EducatorsPage() {
                   <div className="flex-1">
                     <div className="flex items-center space-x-2">
                       <CardTitle className="text-lg">{educator.name}</CardTitle>
-                      {educator.verified && <Award className="h-4 w-4 text-blue-600" />}
+                      {educator.verified && <FiAward className="h-4 w-4 text-blue-600" />}
                     </div>
                     <CardDescription className="mb-2">{educator.title}</CardDescription>
                     <div className="flex items-center space-x-4 text-sm">
                       <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <FiStar className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="font-medium">{educator.rating}</span>
                         <span className="text-gray-500">({educator.reviews})</span>
                       </div>
                       <div className="flex items-center space-x-1">
-                        <DollarSign className="h-4 w-4 text-green-600" />
+                        <FiDollarSign className="h-4 w-4 text-green-600" />
                         <span className="font-medium">${educator.hourlyRate}/hr</span>
                       </div>
                     </div>
@@ -238,11 +238,11 @@ export default function EducatorsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4 text-sm text-gray-600">
                   <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4" />
+                    <FiClock className="h-4 w-4" />
                     <span>{educator.experience}</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Video className="h-4 w-4" />
+                    <FiVideo className="h-4 w-4" />
                     <span>{educator.totalSessions} sessions</span>
                   </div>
                 </div>
@@ -254,13 +254,13 @@ export default function EducatorsPage() {
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm" className="flex-1 bg-transparent" asChild>
                     <Link href={`/educators/${educator.id}`}>
-                      <MessageCircle className="h-4 w-4 mr-1" />
+                      <FiMessageCircle className="h-4 w-4 mr-1" />
                       View Profile
                     </Link>
                   </Button>
                   <Button size="sm" className="flex-1" asChild>
                     <Link href={`/educators/${educator.id}/book`}>
-                      <Calendar className="h-4 w-4 mr-1" />
+                      <FiCalendar className="h-4 w-4 mr-1" />
                       Book Session
                     </Link>
                   </Button>
@@ -272,7 +272,7 @@ export default function EducatorsPage() {
 
         {filteredEducators.length === 0 && (
           <div className="text-center py-12">
-            <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <FiBookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No educators found</h3>
             <p className="text-gray-600 mb-4">Try adjusting your search or browse all available educators</p>
             <Button asChild>

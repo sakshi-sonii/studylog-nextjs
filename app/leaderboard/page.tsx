@@ -2,7 +2,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Trophy, Medal, Award, BookOpen, Clock, Users, TrendingUp, Crown, Star, Flame } from "lucide-react"
+import { FiAward, FiBookOpen, FiClock, FiUsers, FiTrendingUp, FiStar } from 'react-icons/fi';
+import { FaCrown, FaMedal, FaFire } from 'react-icons/fa';
 import Link from "next/link"
 
 export default function LeaderboardPage() {
@@ -115,11 +116,11 @@ export default function LeaderboardPage() {
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="h-6 w-6 text-yellow-500" />
+        return <FaCrown className="h-6 w-6 text-yellow-500" />
       case 2:
-        return <Medal className="h-6 w-6 text-gray-400" />
+        return <FaMedal className="h-6 w-6 text-gray-400" />
       case 3:
-        return <Award className="h-6 w-6 text-amber-600" />
+        return <FiAward className="h-6 w-6 text-amber-600" />
       default:
         return <span className="text-lg font-bold text-gray-600">#{rank}</span>
     }
@@ -138,7 +139,7 @@ export default function LeaderboardPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <BookOpen className="h-8 w-8 text-blue-600" />
+              <FiBookOpen className="h-8 w-8 text-blue-600" />
               <h1 className="text-2xl font-bold text-gray-900">StudyLog</h1>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
@@ -170,7 +171,7 @@ export default function LeaderboardPage() {
         {/* Page Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Trophy className="h-8 w-8 text-yellow-500" />
+            <FiAward className="h-8 w-8 text-yellow-500" />
             <h2 className="text-3xl font-bold text-gray-900">Leaderboard</h2>
           </div>
           <p className="text-gray-600">Compete with fellow students and celebrate achievements</p>
@@ -180,28 +181,28 @@ export default function LeaderboardPage() {
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6 text-center">
-              <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+              <FiClock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
               <div className="text-2xl font-bold text-blue-600">2,450</div>
               <div className="text-sm text-gray-600">Total Study Hours</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
-              <Users className="h-8 w-8 text-green-600 mx-auto mb-2" />
+              <FiUsers className="h-8 w-8 text-green-600 mx-auto mb-2" />
               <div className="text-2xl font-bold text-green-600">156</div>
               <div className="text-sm text-gray-600">Active Students</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
-              <Flame className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+              <FaFire className="h-8 w-8 text-orange-600 mx-auto mb-2" />
               <div className="text-2xl font-bold text-orange-600">28</div>
               <div className="text-sm text-gray-600">Longest Streak</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
-              <Star className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+              <FiStar className="h-8 w-8 text-purple-600 mx-auto mb-2" />
               <div className="text-2xl font-bold text-purple-600">89</div>
               <div className="text-sm text-gray-600">Badges Earned</div>
             </CardContent>
@@ -219,7 +220,7 @@ export default function LeaderboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Trophy className="h-5 w-5" />
+                  <FiAward className="h-5 w-5" />
                   <span>Top Individual Performers</span>
                 </CardTitle>
                 <CardDescription>Rankings based on study hours, consistency, and achievements</CardDescription>
@@ -256,7 +257,7 @@ export default function LeaderboardPage() {
                       <div className="text-right">
                         <div className="text-lg font-bold text-blue-600">{leader.points}</div>
                         <div className={`text-sm ${getChangeColor(leader.change)}`}>
-                          {leader.change !== "0" && <TrendingUp className="h-3 w-3 inline mr-1" />}
+                          {leader.change !== "0" && <FiTrendingUp className="h-3 w-3 inline mr-1" />}
                           {leader.change}
                         </div>
                       </div>
@@ -271,7 +272,7 @@ export default function LeaderboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Users className="h-5 w-5" />
+                  <FiUsers className="h-5 w-5" />
                   <span>Top Study Groups</span>
                 </CardTitle>
                 <CardDescription>Rankings based on collective study hours and group engagement</CardDescription>
@@ -296,7 +297,7 @@ export default function LeaderboardPage() {
                             <span>{group.members} members</span>
                             <span>{group.totalHours}h total</span>
                             <div className="flex items-center space-x-1">
-                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                              <FiStar className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                               <span>{group.avgRating}</span>
                             </div>
                           </div>
@@ -305,7 +306,7 @@ export default function LeaderboardPage() {
                       <div className="text-right">
                         <div className="text-lg font-bold text-blue-600">{group.points}</div>
                         <div className={`text-sm ${getChangeColor(group.change)}`}>
-                          {group.change !== "0" && <TrendingUp className="h-3 w-3 inline mr-1" />}
+                          {group.change !== "0" && <FiTrendingUp className="h-3 w-3 inline mr-1" />}
                           {group.change}
                         </div>
                       </div>
@@ -345,7 +346,7 @@ export default function LeaderboardPage() {
               <div className="text-right">
                 <div className="text-lg font-bold text-blue-600">1,890</div>
                 <div className="text-sm text-green-600">
-                  <TrendingUp className="h-3 w-3 inline mr-1" />
+                  <FiTrendingUp className="h-3 w-3 inline mr-1" />
                   +5
                 </div>
               </div>
