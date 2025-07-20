@@ -37,6 +37,7 @@ export default function GroupsPage() {
     tags: '',
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -45,13 +46,35 @@ export default function GroupsPage() {
     if (searchParams.get('create') === '1') {
       setShowModal(true);
     }
+  }, []); // Only run once on mount
+
+  useEffect(() => {
+    if (searchParams.get('create') === '1') {
+      setShowModal(true);
+    }
   }, [searchParams]);
+
+
 
   async function fetchGroups() {
     setLoading(true);
-    const res = await fetch('/api/groups');
-    if (res.ok) {
-      setGroups(await res.json());
+    setError(null);
+    try {
+      const res = await fetch('/api/groups');
+      if (res.ok) {
+        const data = await res.json();
+        console.log('🔍 DEBUG: Fetched groups from API:', data);
+        console.log('🔍 DEBUG: Number of groups:', data.length);
+        console.log('🔍 DEBUG: Group names:', data.map(g => g.name));
+        // Ensure we're not duplicating data
+        setGroups(Array.isArray(data) ? data : []);
+      } else {
+        console.error('Failed to fetch groups:', res.status);
+        setError('Failed to load groups');
+      }
+    } catch (error) {
+      console.error('Error fetching groups:', error);
+      setError('Failed to load groups');
     }
     setLoading(false);
   }
@@ -74,6 +97,8 @@ export default function GroupsPage() {
     }
     setLoading(false);
   }
+
+
 
   const filteredGroups = groups.filter((group) => {
     const matchesSearch =
@@ -167,9 +192,33 @@ export default function GroupsPage() {
           </div>
         </div>
 
+
+
         {/* Groups Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGroups.map((group) => (
+          {loading ? (
+            <div className="col-span-full text-center py-12">
+              <div className="text-gray-500">Loading groups...</div>
+            </div>
+          ) : error ? (
+            <div className="col-span-full text-center py-12">
+              <div className="text-red-500">Error: {error}</div>
+              <Button onClick={fetchGroups} className="mt-4">
+                Retry
+              </Button>
+            </div>
+          ) : filteredGroups.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <FiUsers className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No groups found</h3>
+              <p className="text-gray-600 mb-4">Try adjusting your search or create a new study group</p>
+              <Button onClick={() => setShowModal(true)}>
+                <FiPlus className="h-4 w-4 mr-2" />
+                Create New Group
+              </Button>
+            </div>
+          ) : (
+            filteredGroups.map((group, index) => (
             <Card key={group._id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -233,20 +282,9 @@ export default function GroupsPage() {
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
-
-        {filteredGroups.length === 0 && (
-          <div className="text-center py-12">
-            <FiUsers className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No groups found</h3>
-            <p className="text-gray-600 mb-4">Try adjusting your search or create a new study group</p>
-            <Button onClick={() => setShowModal(true)}>
-              <FiPlus className="h-4 w-4 mr-2" />
-              Create New Group
-            </Button>
-          </div>
+          ))
         )}
+        </div>
       </div>
 
       {showModal && (

@@ -6,9 +6,26 @@ import { useState, useEffect } from "react"
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
+interface UserStats {
+  totalHours: number;
+  todayHours: number;
+  streak: number;
+  totalSessions: number;
+}
+
 export default function DashboardPage() {
   const [timerActive, setTimerActive] = useState(false)
   const [timeLeft, setTimeLeft] = useState(25 * 60) // 25 minutes in seconds
+  const [userStats, setUserStats] = useState<UserStats>({
+    totalHours: 0,
+    todayHours: 0,
+    streak: 0,
+    totalSessions: 0
+  })
+  const [loading, setLoading] = useState(true)
+
+  const router = useRouter();
+  const { data: session } = useSession();
 
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -20,6 +37,53 @@ export default function DashboardPage() {
     return () => clearInterval(interval)
   }, [timerActive, timeLeft])
 
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetchUserStats();
+    }
+  }, [session]);
+
+  const fetchUserStats = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/users?action=stats&userId=${session?.user?.email}`);
+      if (response.ok) {
+        const stats = await response.json();
+        setUserStats(stats);
+      }
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const recordSession = async (duration: number) => {
+    if (!session?.user?.email) return;
+    
+    try {
+      await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: session.user.email,
+          sessionData: {
+            date: new Date().toISOString().split('T')[0],
+            title: 'Pomodoro Session',
+            description: 'Focused study session',
+            duration: duration / 3600, // Convert seconds to hours
+            time: new Date().toISOString()
+          }
+        })
+      });
+      
+      // Refresh stats after recording session
+      fetchUserStats();
+    } catch (error) {
+      console.error('Error recording session:', error);
+    }
+  };
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
@@ -27,7 +91,16 @@ export default function DashboardPage() {
   }
 
   const toggleTimer = () => {
-    setTimerActive(!timerActive)
+    if (!timerActive && timeLeft === 25 * 60) {
+      // Starting a new session
+      setTimerActive(true)
+    } else if (timerActive) {
+      // Pausing the session
+      setTimerActive(false)
+    } else {
+      // Resuming the session
+      setTimerActive(true)
+    }
   }
 
   const resetTimer = () => {
@@ -35,10 +108,17 @@ export default function DashboardPage() {
     setTimeLeft(25 * 60)
   }
 
-  const progress = (1 - timeLeft / (25 * 60)) * 100
+  // Record session when timer completes
+  useEffect(() => {
+    if (timeLeft === 0 && timerActive) {
+      setTimerActive(false)
+      const sessionDuration = 25 * 60 - timeLeft // 25 minutes in seconds
+      recordSession(sessionDuration)
+      setTimeLeft(25 * 60) // Reset timer
+    }
+  }, [timeLeft, timerActive])
 
-  const router = useRouter();
-  const { data: session } = useSession();
+  const progress = (1 - timeLeft / (25 * 60)) * 100
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -141,27 +221,27 @@ export default function DashboardPage() {
               {[
                 {
                   title: "Study Hours Today",
-                  value: "4.5h",
+                  value: loading ? "..." : `${userStats.todayHours}h`,
                   icon: FiClock,
                   color: "from-blue-500 to-cyan-500",
                   bgColor: "from-blue-50 to-cyan-50",
-                  change: "+2.1h from yesterday",
+                  change: loading ? "Loading..." : `${userStats.todayHours > 0 ? '+' : ''}${userStats.todayHours}h today`,
                 },
                 {
-                  title: "Active Groups",
-                  value: "3",
+                  title: "Total Study Hours",
+                  value: loading ? "..." : `${userStats.totalHours}h`,
                   icon: FiUsers,
                   color: "from-green-500 to-emerald-500",
                   bgColor: "from-green-50 to-emerald-50",
-                  change: "2 new messages",
+                  change: loading ? "Loading..." : `${userStats.totalSessions} sessions`,
                 },
                 {
                   title: "Current Streak",
-                  value: "12 days",
+                  value: loading ? "..." : `${userStats.streak} days`,
                   icon: FiAward,
                   color: "from-orange-500 to-red-500",
                   bgColor: "from-orange-50 to-red-50",
-                  change: "Personal best!",
+                  change: loading ? "Loading..." : userStats.streak > 0 ? "Keep it up!" : "Start studying!",
                 },
               ].map((stat, index) => (
                 <div key={index} className="group relative">

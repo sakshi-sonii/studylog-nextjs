@@ -7,106 +7,50 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { FiSearch, FiStar, FiBookOpen, FiClock, FiDollarSign, FiCalendar, FiVideo, FiMessageCircle, FiAward } from 'react-icons/fi';
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+
+interface Educator {
+  _id?: string;
+  name: string;
+  title: string;
+  subjects: string[];
+  rating: number;
+  reviews: number;
+  hourlyRate: number;
+  experience: string;
+  availability: string;
+  totalSessions: number;
+  description: string;
+  verified: boolean;
+  avatar?: string;
+}
 
 export default function EducatorsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedSubject, setSelectedSubject] = useState("all")
+  const [educators, setEducators] = useState<Educator[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const educators = [
-    {
-      id: 1,
-      name: "Dr. Sarah Johnson",
-      title: "Mathematics Professor",
-      subjects: ["Calculus", "Linear Algebra", "Statistics"],
-      rating: 4.9,
-      reviews: 127,
-      hourlyRate: 45,
-      experience: "8 years",
-      availability: "Available today",
-      totalSessions: 340,
-      description:
-        "Experienced mathematics professor specializing in advanced calculus and linear algebra. Patient teaching style with proven results.",
-      verified: true,
-      avatar: "/placeholder.svg?height=64&width=64",
-    },
-    {
-      id: 2,
-      name: "Prof. Michael Chen",
-      title: "Computer Science Expert",
-      subjects: ["Algorithms", "Data Structures", "Python", "Java"],
-      rating: 4.8,
-      reviews: 89,
-      hourlyRate: 55,
-      experience: "12 years",
-      availability: "Available tomorrow",
-      totalSessions: 256,
-      description:
-        "Senior software engineer turned educator. Specializes in programming fundamentals and algorithm design.",
-      verified: true,
-      avatar: "/placeholder.svg?height=64&width=64",
-    },
-    {
-      id: 3,
-      name: "Dr. Emily Rodriguez",
-      title: "Physics Specialist",
-      subjects: ["Mechanics", "Thermodynamics", "Quantum Physics"],
-      rating: 4.7,
-      reviews: 156,
-      hourlyRate: 50,
-      experience: "10 years",
-      availability: "Available now",
-      totalSessions: 423,
-      description: "PhD in Physics with extensive teaching experience. Makes complex concepts easy to understand.",
-      verified: true,
-      avatar: "/placeholder.svg?height=64&width=64",
-    },
-    {
-      id: 4,
-      name: "James Wilson",
-      title: "Chemistry Tutor",
-      subjects: ["Organic Chemistry", "Biochemistry", "Lab Techniques"],
-      rating: 4.6,
-      reviews: 73,
-      hourlyRate: 40,
-      experience: "5 years",
-      availability: "Available this week",
-      totalSessions: 189,
-      description: "Graduate student with strong background in organic chemistry and laboratory work.",
-      verified: false,
-      avatar: "/placeholder.svg?height=64&width=64",
-    },
-    {
-      id: 5,
-      name: "Dr. Lisa Thompson",
-      title: "Biology Expert",
-      subjects: ["Cell Biology", "Genetics", "Molecular Biology"],
-      rating: 4.8,
-      reviews: 94,
-      hourlyRate: 48,
-      experience: "7 years",
-      availability: "Available today",
-      totalSessions: 267,
-      description: "Research scientist and educator with expertise in cellular and molecular biology.",
-      verified: true,
-      avatar: "/placeholder.svg?height=64&width=64",
-    },
-    {
-      id: 6,
-      name: "Robert Kim",
-      title: "Language Arts Teacher",
-      subjects: ["English Literature", "Writing", "Grammar"],
-      rating: 4.5,
-      reviews: 112,
-      hourlyRate: 35,
-      experience: "6 years",
-      availability: "Available tomorrow",
-      totalSessions: 298,
-      description: "Certified English teacher with passion for literature and creative writing.",
-      verified: true,
-      avatar: "/placeholder.svg?height=64&width=64",
-    },
-  ]
+  useEffect(() => {
+    fetchEducators();
+  }, []);
+
+  const fetchEducators = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/educators');
+      if (response.ok) {
+        const data = await response.json();
+        setEducators(data);
+      }
+    } catch (error) {
+      console.error('Error fetching educators:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
 
   const subjects = ["all", "Mathematics", "Computer Science", "Physics", "Chemistry", "Biology", "English"]
 
@@ -192,8 +136,17 @@ export default function EducatorsPage() {
 
         {/* Educators Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEducators.map((educator) => (
-            <Card key={educator.id} className="hover:shadow-lg transition-shadow">
+          {loading ? (
+            <div className="col-span-full text-center py-12">
+              <div className="text-gray-500">Loading educators...</div>
+            </div>
+          ) : filteredEducators.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <div className="text-gray-500">No educators found matching your criteria.</div>
+            </div>
+          ) : (
+                        filteredEducators.map((educator) => (
+              <Card key={educator._id || educator.name} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start space-x-4">
                   <Avatar className="h-16 w-16">
@@ -253,13 +206,13 @@ export default function EducatorsPage() {
 
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm" className="flex-1 bg-transparent" asChild>
-                    <Link href={`/educators/${educator.id}`}>
+                    <Link href={`/educators/${educator._id || educator.name}`}>
                       <FiMessageCircle className="h-4 w-4 mr-1" />
                       View Profile
                     </Link>
                   </Button>
                   <Button size="sm" className="flex-1" asChild>
-                    <Link href={`/educators/${educator.id}/book`}>
+                    <Link href={`/educators/${educator._id || educator.name}/book`}>
                       <FiCalendar className="h-4 w-4 mr-1" />
                       Book Session
                     </Link>
@@ -267,7 +220,8 @@ export default function EducatorsPage() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          ))
+        )}
         </div>
 
         {filteredEducators.length === 0 && (
